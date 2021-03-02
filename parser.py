@@ -4,12 +4,13 @@ from time_service import TimeService
 
 
 def get_tweets(statuses):
-    tweets = []
-
-    for status in statuses:
-        tweets.append(dict(text=status.full_text,
-                           created_at=status.created_at.strftime("%-m/%-d/%Y")))
-    return tweets
+    return [
+        dict(
+            text=status.full_text,
+            created_at=status.created_at.strftime("%-m/%-d/%Y"),
+        )
+        for status in statuses
+    ]
 
 
 def remove_twitter_url(tweet):
@@ -17,14 +18,14 @@ def remove_twitter_url(tweet):
 
 
 def get_date_dictionary(tweets):
-    date_dictionary = dict()
+    date_dictionary = {}
 
     for tweet in tweets:
         tweet_date = tweet["created_at"]
         tweet_timestamp = TimeService().get_timestamp(tweet_date)
         tweet_content = remove_twitter_url(tweet["text"])
 
-        if tweet_date in date_dictionary.keys():
+        if tweet_date in date_dictionary:
             date_dictionary[tweet_timestamp] += ' ' + tweet_content
         else:
             date_dictionary[tweet_timestamp] = tweet_content
@@ -34,7 +35,7 @@ def get_date_dictionary(tweets):
 
 
 def get_mood_dictionary(date_dictionary):
-    mood_dictionary = dict()
+    mood_dictionary = {}
 
     for date in date_dictionary:
         english_time = TimeService().get_string_from_timestamp(date)
